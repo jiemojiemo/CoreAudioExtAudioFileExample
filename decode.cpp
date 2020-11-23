@@ -29,13 +29,6 @@ int main(int argc, char* argv[])
     assert(status == noErr);
     cout << "file frame length:" << file_frame_length << endl;
 
-    UInt32 max_packet_size;
-    size = sizeof(max_packet_size);
-    status = ExtAudioFileGetProperty(file, kExtAudioFileProperty_FileMaxPacketSize,
-                                     &size, &max_packet_size);
-    assert(status == noErr);
-    cout << "max packet size:" << max_packet_size << endl;
-
     // get same basic information about input file
     AudioStreamBasicDescription input_asbd;
     size = sizeof(input_asbd);
@@ -50,14 +43,7 @@ int main(int argc, char* argv[])
 
     // set output file format
     AudioStreamBasicDescription output_asbd;
-    output_asbd.mSampleRate = 44100;
-    output_asbd.mFormatID = kAudioFormatLinearPCM;
-    output_asbd.mFormatFlags = kAudioFormatFlagIsFloat;
-    output_asbd.mBitsPerChannel = 32;
-    output_asbd.mChannelsPerFrame = 2;
-    output_asbd.mBytesPerFrame = output_asbd.mChannelsPerFrame * output_asbd.mBitsPerChannel/8;
-    output_asbd.mFramesPerPacket = 1;
-    output_asbd.mBytesPerPacket = output_asbd.mFramesPerPacket * output_asbd.mBytesPerFrame;
+    FillOutASBDForLPCM(output_asbd, 44100, 2, 32, 32, true, false, false);
 
     size = sizeof(output_asbd);
     status = ExtAudioFileSetProperty(file, kExtAudioFileProperty_ClientDataFormat,
@@ -67,7 +53,6 @@ int main(int argc, char* argv[])
     // now, we can read pcm from file
     SInt64 frame_offset = 0;
     UInt32 num_frame_read = 1024;
-
     AudioBufferList buffer_list;
     buffer_list.mNumberBuffers = 1;
     buffer_list.mBuffers[0].mNumberChannels = output_asbd.mChannelsPerFrame;

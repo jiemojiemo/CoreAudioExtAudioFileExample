@@ -29,10 +29,8 @@ AudioStreamBasicDescription createASBD(AudioFileTypeID file_type,
         AudioFormatGetProperty(kAudioFormatProperty_FormatInfo, 0, NULL, &size, &asbd);
         break;
     case kAudioFileAIFFType:
-        FillOutASBDForLPCM (asbd,sample_rate,num_channels,32,32,true,false,false);
-        asbd.mFormatFlags = kAudioFormatFlagIsBigEndian |
-            kAudioFormatFlagIsSignedInteger |
-            kAudioFormatFlagIsPacked;
+        FillOutASBDForLPCM (asbd,sample_rate,num_channels,32,32,false,true,false);
+        AudioFormatGetProperty(kAudioFormatProperty_FormatInfo, 0, NULL, &size, &asbd);
         break;
     case kAudioFileWAVEType:
         // we write float-interleave data as default
@@ -41,6 +39,11 @@ AudioStreamBasicDescription createASBD(AudioFileTypeID file_type,
     case kAudioFileFLACType:
         asbd.mFormatID = kAudioFormatFLAC;
         AudioFormatGetProperty(kAudioFormatProperty_FormatInfo, 0, NULL, &size, &asbd);
+        break;
+    case kAudioFileMP3Type:
+        asbd.mFormatID = kAudioFormatMPEGLayer3;
+        AudioFormatGetProperty(kAudioFormatProperty_FormatInfo, 0, NULL, &size, &asbd);
+        break;
     default:
         break;
     }
@@ -51,14 +54,14 @@ AudioStreamBasicDescription createASBD(AudioFileTypeID file_type,
 
 int main(int argc, char* argv[])
 {
-    AudioFileTypeID file_type = kAudioFileFLACType; // or kAudioFileMPEG4Type, kAudioFileAIFFType, kAudioFileWAVEType
+    AudioFileTypeID file_type = kAudioFileFLACType;
     int o_channels = 2;
     double o_sr = 44100;
 
     AudioStreamBasicDescription output_asbd = createASBD(file_type, o_sr, o_channels);
 
     // open output file
-    CFURLRef output_url = createCFURLWithStdString("sin440.flac");
+    CFURLRef output_url = createCFURLWithStdString("sin440.aac");
     ExtAudioFileRef output_file;
     OSStatus status = ExtAudioFileCreateWithURL(output_url,file_type,
                                                 &output_asbd, nullptr,
@@ -82,6 +85,7 @@ int main(int argc, char* argv[])
     std::vector<float> buffer(num_frame_out_per_block * i_channels);
     outputData.mBuffers[0].mData = buffer.data();
 
+
     float t = 0;
     float tincr = 2 * M_PI * 440.0f / i_sr;
     for(int i = 0; i < 200; ++i){
@@ -92,14 +96,13 @@ int main(int argc, char* argv[])
             t += tincr;
         }
 
-        // write block
+        // write audio block
         status = ExtAudioFileWrite(output_file, num_frame_out_per_block, &outputData);
 
         assert(status == noErr);
     }
 
     ExtAudioFileDispose(output_file);
-
 
     return 0;
 }

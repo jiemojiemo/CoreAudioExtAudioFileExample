@@ -8,3 +8,6 @@ target_link_libraries(decode PRIVATE "-framework CoreFoundation -framework Audio
 
 add_executable(encode encode.cpp)
 target_link_libraries(encode PRIVATE "-framework CoreFoundation -framework AudioToolbox")
+
+add_executable(decode_with_callbacks decode_with_callbacks.cpp)
+target_link_libraries(decode_with_callbacks PRIVATE "-framework CoreFoundation -framework AudioToolbox")

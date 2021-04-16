@@ -14,3 +14,6 @@ target_link_libraries(decode_with_callbacks PRIVATE "-framework CoreFoundation -
 
 add_executable(detect_audio_format detect_audio_format.cpp)
 target_link_libraries(detect_audio_format PRIVATE "-framework CoreFoundation -framework AudioToolbox")
+
+add_executable(encode_planar_data encode_planar_data.cpp)
+target_link_libraries(encode_planar_data PRIVATE "-framework CoreFoundation -framework AudioToolbox")

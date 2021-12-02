@@ -17,3 +17,6 @@ target_link_libraries(detect_audio_format PRIVATE "-framework CoreFoundation -fr
 
 add_executable(encode_planar_data encode_planar_data.cpp)
 target_link_libraries(encode_planar_data PRIVATE "-framework CoreFoundation -framework AudioToolbox")
+
+add_executable(encode_with_callbacks encode_with_callbacks.cpp file_output_stream.cpp)
+target_link_libraries(encode_with_callbacks PRIVATE "-framework CoreFoundation -framework AudioToolbox")

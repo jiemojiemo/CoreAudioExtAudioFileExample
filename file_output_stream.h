@@ -18,8 +18,13 @@ public:
      */
     virtual int64_t write(const uint8_t* source_buf, int64_t size) = 0;
 
+    /**
+     * read from file
+     * @param dest_buf the destination buffer
+     * @param size size of bytes
+     * @return number of read bytes, return -1 if failed
+     */
     virtual int64_t read(uint8_t* dest_buf, int64_t size) = 0;
-
 
     /**
      * returns the write pointer position

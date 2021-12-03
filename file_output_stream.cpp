@@ -3,7 +3,7 @@
 //
 
 #include "file_output_stream.h"
-
+#include <iostream>
 FileOutputStream::FileOutputStream(const std::string& path)
 {
     open(path);
@@ -51,8 +51,15 @@ int64_t FileOutputStream::read(uint8_t* dest_buf, int64_t size)
     if(!isOpen()){
         return -1;
     }
-
-    return fread(dest_buf,1, size, fp_);
+    auto ret = fread(dest_buf, 1, size, fp_);
+    if(ret != size){
+        if(ferror(fp_))
+        {
+            std::cerr << "error reading" << std::endl;
+            return -1;
+        }
+    }
+    return ret;
 }
 
 
